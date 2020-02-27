@@ -17,6 +17,7 @@ LOG_FILE = "mediafile-organizer.log"
 HISTORY_FILE = "mediafile-organizer-history"
 SLACK_POST_URL = os.environ["slack_post_url"]
 SLACK_CHANNEL = os.environ["slack_post_channel"]
+LINE_POST_URL = os.environ["line_post_url"]
 
 # log設定
 # formatter = "%(asctime)s %(levelname)-7s %(message)s"
@@ -129,6 +130,15 @@ def _post_line_message(message: str) -> None:
     if message == "":
         return
 
+    line_message = {
+        "message": message,
+    }
+    try:
+        requests.post(LINE_POST_URL, data=json.dumps(line_message))
+        logging.info("line message posted.")
+    except requests.exceptions.RequestException as e:
+        logging.error("request failed: {}".format(e))
+
 
 def _post_slack_message(message: str) -> None:
     if message == "":
@@ -141,6 +151,6 @@ def _post_slack_message(message: str) -> None:
     }
     try:
         requests.post(SLACK_POST_URL, data=json.dumps(slack_message))
-        logging.info("message posted to {}".format(slack_message["channel"]))
+        logging.info("slack message posted to {}.".format(slack_message["channel"]))
     except requests.exceptions.RequestException as e:
         logging.error("request failed: {}".format(e))
