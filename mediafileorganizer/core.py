@@ -84,6 +84,7 @@ def _get_medias(target_path: Path) -> List[Media]:
 def _move(medias: List[Media], target_path: Path) -> Tuple[str, str]:
     # 移動の結果として下記のような文字列を返却
     # --------------------------------
+    # 2 files moved.
     # 2020/01/07 (count: 2)
     #   [img] d:/path/of/image.jpg
     #   [mov] d:/path/of/movie.mov
@@ -98,6 +99,7 @@ def _move(medias: List[Media], target_path: Path) -> Tuple[str, str]:
             date_group_medias[media.date_str] = []
         date_group_medias[media.date_str].append(media)
 
+    all_count = 0
     for key in date_group_medias:
         # 日付フォルダ作成
         date_dir: Path = target_path.joinpath(key.replace("/", ""))
@@ -115,6 +117,9 @@ def _move(medias: List[Media], target_path: Path) -> Tuple[str, str]:
         result_tmp = "{} (count: {})\n".format(key, count)
         move_result += result_tmp + result_line
         move_result_simple += result_tmp
+        all_count += count
+
+    move_result_simple = "{} files moved.\n{}".format(all_count, move_result_simple)
 
     return move_result, move_result_simple
 
@@ -130,6 +135,7 @@ def _post_line_message(message: str) -> None:
     if message == "":
         return
 
+    message = "写真と動画を整理しました。\n\n" + message
     line_message = {
         "message": message,
     }
@@ -144,6 +150,7 @@ def _post_slack_message(message: str) -> None:
     if message == "":
         return
 
+    message = "写真と動画を整理しました。\n\n" + message
     slack_message = {
         "message": message,
         "color": "good",
