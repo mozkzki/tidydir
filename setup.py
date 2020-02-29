@@ -2,10 +2,10 @@ from setuptools import setup
 
 PACKAGE_NAME = "mediafileorganizer"
 
-with open("README.md") as f:
+with open("README.md", encoding="utf-8") as f:
     readme = f.read()
 
-with open("VERSION") as f:
+with open("VERSION", encoding="utf-8") as f:
     version = f.read()
 
 setup(
