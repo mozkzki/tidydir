@@ -38,9 +38,9 @@ def organize(target_dir: str = ".", post_line: bool = True) -> None:
         _append_history(move_result, target_path.name)
         # Line通知
         if post_line:
-            _post_line_message(move_result_simple)
+            _post_line_message(move_result_simple, target_path)
         # Slack通知
-        _post_slack_message(move_result_simple)
+        _post_slack_message(move_result_simple, target_path)
 
 
 def _get_path(target_dir: str = ".") -> Path:
@@ -134,11 +134,11 @@ def _append_history(history: str, target_dir_name: str) -> None:
         f.write("{}".format(history))
 
 
-def _post_line_message(message: str) -> None:
+def _post_line_message(message: str, target_path: Path) -> None:
     if message == "":
         return
 
-    message = "写真と動画を整理しました。\n\n" + message
+    message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message
     line_message = {
         "message": message,
     }
@@ -149,11 +149,11 @@ def _post_line_message(message: str) -> None:
         logging.error("request failed: {}".format(e))
 
 
-def _post_slack_message(message: str) -> None:
+def _post_slack_message(message: str, target_path: Path) -> None:
     if message == "":
         return
 
-    message = "写真と動画を整理しました。\n\n" + message
+    message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message
     slack_message = {
         "message": message,
         "color": "good",
