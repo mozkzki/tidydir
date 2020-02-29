@@ -11,7 +11,6 @@ def main():
     )
 
     parser.add_argument("target_dir", help="対象ディレクトリ")
-    parser.add_argument("-f", "--logfile", help="ログを出力するファイルパスを指定します")
     parser.add_argument("-d", "--debug", help="デバッグログ出力をONにします", action="store_true")
     parser.add_argument("-l", "--line", help="LINE通知を有効にします", action="store_true")
 
@@ -24,7 +23,6 @@ def main():
     else:
         log_level = logging.INFO
     logging.basicConfig(level=log_level, format=formatter)
-    # logging.basicConfig(level=log_level, format=formatter, filename="hoge.log")
 
     # メインの処理
     print("")

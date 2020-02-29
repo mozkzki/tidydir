@@ -32,14 +32,15 @@ def organize(target_dir: str = ".", post_line: bool = True) -> None:
     # 対象ファイル取得
     medias: List[Media] = _get_medias(target_path)
     # 移動
-    move_result, move_result_simple = _move(medias, target_path)
-    # 履歴に追記
-    _append_history(move_result, target_path.name)
-    # Line通知
-    if post_line:
-        _post_line_message(move_result_simple)
-    # Slack通知
-    _post_slack_message(move_result_simple)
+    move_result, move_result_simple, is_no_move = _move(medias, target_path)
+    if not is_no_move:
+        # 履歴に追記
+        _append_history(move_result, target_path.name)
+        # Line通知
+        if post_line:
+            _post_line_message(move_result_simple)
+        # Slack通知
+        _post_slack_message(move_result_simple)
 
 
 def _get_path(target_dir: str = ".") -> Path:
@@ -83,7 +84,7 @@ def _get_medias(target_path: Path) -> List[Media]:
     return medias
 
 
-def _move(medias: List[Media], target_path: Path) -> Tuple[str, str]:
+def _move(medias: List[Media], target_path: Path) -> Tuple[str, str, bool]:
     # 移動の結果として下記のような文字列を返却
     # --------------------------------
     # 2 files moved.
@@ -122,8 +123,8 @@ def _move(medias: List[Media], target_path: Path) -> Tuple[str, str]:
         all_count += count
 
     move_result_simple = "{} files moved.\n{}".format(all_count, move_result_simple)
-
-    return move_result, move_result_simple
+    is_no_move = True if all_count == 0 else False
+    return move_result, move_result_simple, is_no_move
 
 
 def _append_history(history: str, target_dir_name: str) -> None:
