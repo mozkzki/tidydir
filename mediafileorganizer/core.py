@@ -9,7 +9,9 @@ from pathlib import Path
 from mediafileorganizer.media import Media
 from dotenv import load_dotenv
 
-load_dotenv(verbose=True)
+dotenv_path = Path(os.getcwd(), ".env")
+if dotenv_path.exists():
+    load_dotenv(verbose=True, dotenv_path=dotenv_path)
 
 # 固定値
 TARGET_EXTENSIONS = ["mov", "jpg"]

@@ -4,9 +4,12 @@
 
 ## 必要な環境変数
 
+.envファイルに記載する場合、エンコードはUTF-8にすること。
+
 ```(text)
 slack_post_url="<slack_post_url>"
 slack_post_channel="<slack_post_channel>"
+line_post_url="<line_post_url>"
 ```
 
 ## インストール
