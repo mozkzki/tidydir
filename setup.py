@@ -24,7 +24,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     python_requires=">=3.6",
-    install_requires=[],
+    install_requires=["requests", "python-dotenv"],
     entry_points="""
         [console_scripts]
         {app} = {app}.cli:main
