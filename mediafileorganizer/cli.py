@@ -1,5 +1,7 @@
+import os
 import argparse
 import logging
+from pathlib import Path
 from mediafileorganizer.core import organize
 
 
@@ -22,7 +24,8 @@ def main():
         log_level = logging.DEBUG
     else:
         log_level = logging.INFO
-    logging.basicConfig(level=log_level, format=formatter)
+    log_path = Path(os.getcwd(), "mediafile-organizer.log")
+    logging.basicConfig(level=log_level, format=formatter, filename=log_path)
 
     # メインの処理
     print("")
