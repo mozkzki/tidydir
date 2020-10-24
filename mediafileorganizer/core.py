@@ -14,7 +14,7 @@ if dotenv_path.exists():
     load_dotenv(verbose=True, dotenv_path=dotenv_path)
 
 # 固定値
-TARGET_EXTENSIONS = ["mov", "jpg", "png"]
+TARGET_EXTENSIONS = ["mov", "jpg", "png", "mp4"]
 LOG_FILE = "mediafile-organizer.log"
 HISTORY_FILE = "mediafile-organizer-history"
 SLACK_POST_URL = os.environ["slack_post_url"]
