@@ -6,7 +6,7 @@ import logging
 import requests
 from typing import List, Dict, Tuple
 from pathlib import Path
-from mediafileorganizer.media import Media
+from tidydir.media import Media
 from dotenv import load_dotenv
 
 dotenv_path = Path(os.getcwd(), ".env")
@@ -15,32 +15,31 @@ if dotenv_path.exists():
 
 # 固定値
 TARGET_EXTENSIONS = ["mov", "jpg", "png", "mp4"]
-LOG_FILE = "mediafile-organizer.log"
-HISTORY_FILE = "mediafile-organizer-history"
-SLACK_POST_URL = os.environ["slack_post_url"]
-SLACK_CHANNEL = os.environ["slack_post_channel"]
-LINE_POST_URL = os.environ["line_post_url"]
+LOG_FILE = "tidydir.log"
+HISTORY_FILE = "tidydir-history"
+SLACK_POST_URL = os.environ.get("slack_post_url", None)
+SLACK_CHANNEL = os.environ.get("slack_post_channel", None)
+LINE_POST_URL = os.environ.get("line_post_url", None)
 
 # log設定
 # formatter = "%(asctime)s %(levelname)-7s %(message)s"
 # logging.basicConfig(level=logging.DEBUG, filename=LOG_FILE, format=formatter)
 
 
-def organize(target_dir: str = ".", post_line: bool = True) -> None:
+def organize(target_dir: str = ".") -> None:
     # 対象ディレクトリのPathオブジェクト
     target_path = _get_path(target_dir)
     # 対象ファイル取得
-    medias: List[Media] = _get_medias(target_path)
+    medias: List[Media] = __get_medias(target_path)
     # 移動
-    move_result, move_result_simple, is_no_move = _move(medias, target_path)
+    move_result, move_result_simple, is_no_move = __move(medias, target_path)
     if not is_no_move:
         # 履歴に追記
-        _append_history(move_result, target_path.name)
+        __append_history(move_result, target_path.name)
         # Line通知
-        if post_line:
-            _post_line_message(move_result_simple, target_path)
+        __post_line_message(move_result_simple, target_path)
         # Slack通知
-        _post_slack_message(move_result_simple, target_path)
+        __post_slack_message(move_result_simple, target_path)
 
 
 def _get_path(target_dir: str = ".") -> Path:
@@ -58,12 +57,14 @@ def _get_path(target_dir: str = ".") -> Path:
     return p
 
 
-def _get_medias(target_path: Path) -> List[Media]:
+def __get_medias(target_path: Path) -> List[Media]:
     # 対象拡張子のファイルパス(Pathオブジェクト)を取得
     logging.info("get media files from [{}]".format(str(target_path)))
     media_paths = []
     for ext in TARGET_EXTENSIONS:
-        media_paths.extend(list(target_path.glob("*." + ext)))  # "**/*.mov"とするとサブディレクトリも検索
+        media_paths.extend(
+            list(target_path.glob("*." + ext))
+        )  # "**/*.mov"とするとサブディレクトリも検索
 
     # Mediaオブジェクトに変換
     medias = []
@@ -84,7 +85,7 @@ def _get_medias(target_path: Path) -> List[Media]:
     return medias
 
 
-def _move(medias: List[Media], target_path: Path) -> Tuple[str, str, bool]:
+def __move(medias: List[Media], target_path: Path) -> Tuple[str, str, bool]:
     # 移動の結果として下記のような文字列を返却
     # --------------------------------
     # 2 files moved.
@@ -127,15 +128,20 @@ def _move(medias: List[Media], target_path: Path) -> Tuple[str, str, bool]:
     return move_result, move_result_simple, is_no_move
 
 
-def _append_history(history: str, target_dir_name: str) -> None:
+def __append_history(history: str, target_dir_name: str) -> None:
     if history == "":
         return
     with open("{}-{}.log".format(HISTORY_FILE, target_dir_name), mode="a") as f:
         f.write("{}".format(history))
 
 
-def _post_line_message(message: str, target_path: Path) -> None:
+def __post_line_message(message: str, target_path: Path) -> None:
+    if LINE_POST_URL is None:
+        print("can't post message to LINE. because LINE url is null.")
+        return
+
     if message == "":
+        print("omit post message to LINE. because message is empty.")
         return
 
     message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message
@@ -149,8 +155,13 @@ def _post_line_message(message: str, target_path: Path) -> None:
         logging.error("request failed: {}".format(e))
 
 
-def _post_slack_message(message: str, target_path: Path) -> None:
+def __post_slack_message(message: str, target_path: Path) -> None:
+    if SLACK_POST_URL is None:
+        print("can't post message to slack. because slack url is null.")
+        return
+
     if message == "":
+        print("omit post message to slack. because message is empty.")
         return
 
     message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message

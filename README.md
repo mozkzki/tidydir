@@ -1,174 +1,128 @@
-# mediafile-organizer
+# tidydir
 
-画像や動画ファイルを日付フォルダに整理します。
+指定ディレクトリ内のファイルを日付フォルダに整理する。
+スマホやカメラの画像/動画ファイルの日付整理を想定。
 
-## 必要な環境変数
+- 日付は下記の形式であること
+- サブディレクトリは対象外(再帰的には実行されない)
 
-.envファイルに記載する場合、エンコードはUTF-8にすること。
+```txt
+ -------------------
+ 実行前
+ -------------------
+ tests/data
+ ├── 2020-01-01 10.10.10.jpg
+ ├── 2020-05-05 12.12.12.mov
 
-```(text)
+ ↓
+
+ -------------------
+ 実行後
+ -------------------
+ tests/data
+ ├── 20200101
+ │   └── 2020-01-01 10.10.10.jpg
+ ├── 20200505
+ │   └── 2020-05-05 12.12.12.mov
+```
+
+## Usage
+
+Environmental variables
+
+- 結果をLINE, slack通知する場合に必要 (通知しなければ不要)
+- 下記`.env`ファイルをproject rootに配置 (エンコードはUTF-8)
+
+```txt
 slack_post_url="<slack_post_url>"
 slack_post_channel="<slack_post_channel>"
 line_post_url="<line_post_url>"
 ```
 
-## インストール
+Install
 
-```(sh)
-pip install git+https://github.com/yukkun007/mediafile-organizer
+```sh
+pip install git+https://github.com/mozkzki/tidydir
+# upgrade
+pip install --upgrade git+https://github.com/mozkzki/tidydir
+# uninstall
+pip uninstall tidydir
 ```
 
-## アップグレード
+実行
 
-```(sh)
-pip install -U git+https://github.com/yukkun007/mediafile-organizer
+`./tests/data`ディレクトリ以下のファイルが日付フォルダに整理される。
+
+```sh
+tidydir ./tests/data
 ```
 
-## 使い方 (コードからモジュールを利用)
+## Develop
 
-[参照](#モジュールを利用)
+base project: [mozkzki/moz-sample](https://github.com/mozkzki/moz-sample)
 
-## 使い方 (コマンドラインアプリ)
+### Prepare
 
-```(sh)
-mediafileorganizer --help
+```sh
+poetry install
+poetry shell
 ```
 
-## アンインストール
+### Run (Example)
 
-```(sh)
-pip uninstall mediafileorganizer
+```sh
+tidydir ./tests/data
+# or
+make start
 ```
 
-## 開発フロー
+### Unit Test
 
-### 環境構築
+test all.
 
-1. プロジェクトディレクトリに仮想環境を作成するために下記環境変数を追加
-
-   - Linux
-
-     ```(sh)
-     export PIPENV_VENV_IN_PROJECT=true
-     ```
-
-   - Windows
-
-     ```(sh)
-     set PIPENV_VENV_IN_PROJECT=true
-     ```
-
-1. `pip install pipenv`
-1. `git clone git@github.com:yukkun007/mediafile-organizer.git`
-1. `pipenv install --dev`
-
-### install package
-
-下記は編集可能モードでインストールされる。
-
-```(sh)
-pip install -e .
+```sh
+pytest
+pytest -v # verbose
+pytest -s # show standard output (same --capture=no)
+pytest -ra # show summary (exclude passed test)
+pytest -rA # show summary (include passed test)
 ```
 
-通常のインストールは下記だがソース編集の都度`upgrade package`が必要なので基本は`-e`をつける。
+with filter.
 
-```(sh)
-pip install .
+```sh
+pytest -k app
+pytest -k test_app.py
+pytest -k my
 ```
 
-### upgrade package
+specified marker.
 
-```(sh)
-pip install --upgrade . (もしくは-U)
+```sh
+pytest -m 'slow'
+pytest -m 'not slow'
 ```
 
-## 開発行為
+make coverage report.
 
-### モジュールを利用
-
-```(python)
-$ python
->>> import mediafileorganizer
->>> mediafileorganizer.organize("target/dir")
+```sh
+pytest -v --capture=no --cov-config .coveragerc --cov=src --cov-report=xml --cov-report=term-missing .
+# or
+make ut
 ```
 
-### コマンドラインアプリを実行
+### Lint
 
-```(sh)
-pipenv run start (もしくはmediafileorganizer)
+```sh
+flake8 --max-line-length=100 --ignore=E203,W503 ./src
+# or
+make lint
 ```
 
-### unit test
+### Update dependency modules
 
-```(sh)
-pipenv run ut
-```
+dependabot (GitHub公式) がプルリクを挙げてくるので確認してマージする。
 
-### lint
-
-```(sh)
-pipenv run lint
-```
-
-### create api document (sphinx)
-
-```(sh)
-pipenv run doc
-```
-
-## 配布物関連
-
-<details>
-
-### ソースコード配布物の作成
-
-dist/ 以下に myapp-0.0.1.tar.gz が生成される。
-
-```(sh)
-python setup.py sdist
-```
-
-### ソースコード配布物から pip でインストール
-
-```(sh)
-pip install myapp-0.0.1-tar.gz
-```
-
-### ビルド済み配布物(wheel 形式)の作成
-
-dist/ 以下に myapp-0.0.1-py3-none-any.whl が生成される。
-
-```(sh)
-python setup.py bdist_wheel (wheelパッケージが必要)
-```
-
-### ビルド済み配布物(wheel 形式)から pip でインストール
-
-```(sh)
-pip install myapp-0.0.1-py3-none-any.whl
-```
-
-</details>
-
-## 参考
-
-<details>
-
-### パッケージング/開発環境
-
-- <https://techblog.asahi-net.co.jp/entry/2018/06/15/162951>
-- <https://techblog.asahi-net.co.jp/entry/2018/11/19/103455>
-
-### コマンドライン引数のパース
-
-- <https://qiita.com/kzkadc/items/e4fc7bc9c003de1eb6d0>
-
-### 環境変数の定義
-
-- <https://pod.hatenablog.com/entry/2019/04/29/164109>
-
-### TravisCIでファイルを(簡単に)暗号化して使用する
-
-- <https://qiita.com/kmats@github/items/d22fd856883e6c16d7ea>
-
-</details>
+- 最低でもCircleCIが通っているかは確認
+- CircleCIでは、最新の依存モジュールでtestするため`poetry update`してからtestしている
+- dependabotは`pyproject.toml`と`poetry.lock`を更新してくれる
