@@ -571,8 +571,19 @@ python-versions = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.26.0"
+version = "2.27.22"
 description = "Typing stubs for requests"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+types-urllib3 = "<1.27"
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.13"
+description = "Typing stubs for urllib3"
 category = "dev"
 optional = false
 python-versions = "*"
@@ -613,7 +624,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "1a44a349d5d5fcd3b245308a8bd18cb7357db59e619ebd24848c51e8811dcf67"
+content-hash = "933b296a4ae29ffeae5d78fe481c76f702518982f1995b438d1a02a72ab93190"
 
 [metadata.files]
 alabaster = [
@@ -1013,8 +1024,12 @@ typed-ast = [
     {file = "typed_ast-1.4.3.tar.gz", hash = "sha256:fb1bbeac803adea29cedd70781399c99138358c26d05fcbd23c13016b7f5ec65"},
 ]
 types-requests = [
-    {file = "types-requests-2.26.0.tar.gz", hash = "sha256:df5ec8c34b413a42ebb38e4f96bdeb68090b875bdfcc5138dc82989c95445883"},
-    {file = "types_requests-2.26.0-py3-none-any.whl", hash = "sha256:809b5dcd3c408ac39d11d593835b6aff32420b3e7ddb79c7f3e823330f040466"},
+    {file = "types-requests-2.27.22.tar.gz", hash = "sha256:2e81a74d2db1e6d06baa4a9e1896720543739297a23daac0436a34e2fc732574"},
+    {file = "types_requests-2.27.22-py3-none-any.whl", hash = "sha256:58730c31469fb959a21496d97d2e59c06ca6de2ccdfecb583cb924b83cb0811e"},
+]
+types-urllib3 = [
+    {file = "types-urllib3-1.26.13.tar.gz", hash = "sha256:40f8fb5e8cd7d57e8aefdee3fdd5e930aa1a1bb4179cdadd55226cea588af790"},
+    {file = "types_urllib3-1.26.13-py3-none-any.whl", hash = "sha256:ff7500641824f881b2c7bde4cc57e6c3abf03d1e005bae83aca752e77213a5da"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.2-py2-none-any.whl", hash = "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7"},
