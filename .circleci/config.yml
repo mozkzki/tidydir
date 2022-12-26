@@ -205,7 +205,9 @@ jobs:
                   poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry config --list
+                  ls -al
                   poetry install
+                  ls -al
             - save
             - notify_fail_slack
 
