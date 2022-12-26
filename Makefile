@@ -17,4 +17,7 @@ ut:
 	pytest -v --capture=no --cov-config .coveragerc --cov=src --cov-report=xml --cov-report=term-missing .
 
 start:
-	tidydir ./tests/data
+	rm ./tidydir.db
+	rm -rf ./tests/data-tmp
+	mkdir ./tests/data-tmp
+	tidydir ./tests/data-org ./tests/data-tmp

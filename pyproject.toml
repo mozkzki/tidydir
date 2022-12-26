@@ -24,6 +24,7 @@ classifiers=[
 python = "^3.7"
 python-dotenv = "^0.19.2"
 requests = "2.26.0"
+pillow = "^9.3.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "4.0.1"

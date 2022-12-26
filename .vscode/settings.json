@@ -5,7 +5,7 @@
   "python.linting.pylintEnabled": false,
   "python.linting.mypyEnabled": true,
   "python.linting.mypyPath": "${workspaceFolder}/.venv/bin/mypy",
-  "python.sortImports.path": "${workspaceFolder}/.venv/bin/isort",
+  "isort.path": ["${workspaceFolder}/.venv/bin/isort"],
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": "${workspaceFolder}/.venv/bin/flake8",
   "python.linting.flake8Args": [

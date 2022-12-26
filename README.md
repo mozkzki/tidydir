@@ -7,27 +7,47 @@
 指定ディレクトリ内のファイルを日付フォルダに整理する。
 スマホやカメラの画像/動画ファイルの日付整理を想定。
 
-- 日付は下記の形式であること
+- 対象のファイル(拡張子)は下記の通り
+```txt
+    "jpg",
+    "JPG",
+    "jpeg",
+    "JPEG",
+    "png",
+    "PNG",
+    "mp4",
+    "MP4",
+    "mov",
+    "MOV",
+```
+- ファイル名形式は何でもOK（Exifの撮影日時で判定）
+- Exifの撮影日時が無いファイルは整理されない
+- 撮影日時が同じファイルは別名で保存
 - サブディレクトリは対象外(再帰的には実行されない)
 
 ```txt
  -------------------
  実行前
  -------------------
- tests/data
- ├── 2020-01-01 10.10.10.jpg
- ├── 2020-05-05 12.12.12.mov
+ tests/data-org
+ ├── IMG_2031.jpg
+ ├── IMG_2031a.jpg
+ ├── IMG_2031b.jpg
+ ├── IMG_2031b.HEIC  ※対象外の拡張子なので移動されない
+ ├── exifcleaner-for-mac-Hero.jpeg  ※Exifが無いので移動されない
+ └── sub
+      └── IMG_2031.mov  ※サブディレクトリは移動されない
 
  ↓
 
  -------------------
  実行後
  -------------------
- tests/data
- ├── 20200101
- │   └── 2020-01-01 10.10.10.jpg
- ├── 20200505
- │   └── 2020-05-05 12.12.12.mov
+ tests/data-tmp
+ └── 20220821
+      ├── 2022-08-21_10-13-58.jpg
+      ├── 2022-08-21_10-13-58-01.jpg  ※撮影日時が同じファイルは別名で保存
+      └── 2022-08-21_10-13-58-02.jpg  ※撮影日時が同じファイルは別名で保存
 ```
 
 ## Usage
@@ -55,10 +75,10 @@ pip uninstall tidydir
 
 実行
 
-`./tests/data`ディレクトリ以下のファイルが日付フォルダに整理される。
+`./tests/data-org`ディレクトリ以下のファイルが`./tests/data-tmp`ディレクトリ以下の日付フォルダに整理される。
 
 ```sh
-tidydir ./tests/data
+tidydir ./tests/data-org ./tests/data-tmp
 ```
 
 ## Develop
@@ -75,7 +95,7 @@ poetry shell
 ### Run (Example)
 
 ```sh
-tidydir ./tests/data
+tidydir ./tests/data-org ./tests/data-tmp
 # or
 make start
 ```

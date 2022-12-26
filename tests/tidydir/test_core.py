@@ -9,42 +9,43 @@ class TestCore:
         # -------------------
         # 実行前
         # -------------------
-        # tests/data
-        # ├── 2020-01-01\ 10.10.10.jpg
-        # ├── 2020-05-05\ 12.12.12.mov
-        # ├── abcde.mov
+        # tests/data-org
+        # ├── IMG_2031.jpg
+        # ├── IMG_2031a.jpg
+        # ├── IMG_2031b.jpg
+        # ├── IMG_2031b.HEIC  ※対象外の拡張子なので移動されない
+        # ├── exifcleaner-for-mac-Hero.jpeg  ※Exifが無いので移動されない
         # └── sub
-        #      ├── 2020-06-06\ 12.12.12.mov
-        #      └── abcde.mov
+        #      └── IMG_2031.mov  ※サブディレクトリは移動されない
         #
         # ↓
         #
         # -------------------
         # 実行後
         # -------------------
-        # tests/data
-        # ├── 20200101
-        # │   └── 2020-01-01\ 10.10.10.jpg
-        # ├── 20200505
-        # │   └── 2020-05-05\ 12.12.12.mov
-        # ├── abcde.mov                      ※ ファイル名が日付形式を満たさないので移動されない
-        # └── sub
-        #      ├── 2020-06-06\ 12.12.12.mov  ※ 再帰的に検索しないので移動されない
-        #      └── abcde.mov                 ※ 再帰的に検索しないので移動されない
+        # tests/data-tmp
+        # └── 20220821
+        #      ├── 2022-08-21_10-13-58.jpg
+        #      ├── 2022-08-21_10-13-58-01.jpg  ※撮影日時が同じファイルは別名で保存
+        #      └── 2022-08-21_10-13-58-02.jpg  ※撮影日時が同じファイルは別名で保存
 
-        organize("./tests/data")
-        assert os.path.exists("./tests/data/20200101/2020-01-01 10.10.10.jpg") is True
-        assert os.path.exists("./tests/data/20200505/2020-05-05 12.12.12.mov") is True
-        assert os.path.exists("./tests/data/20200606/2020-06-06 12.12.12.mov") is False
-        assert os.path.exists("./tests/data/abcde.mov") is True
-        assert os.path.exists("./tests/data/sub/2020-06-06 12.12.12.mov") is True
-        assert os.path.exists("./tests/data/sub/abcde.mov") is True
+        if os.path.exists("tidydir.db"):
+            os.remove("tidydir.db")
+        if os.path.exists("./tests/data-tmp"):
+            shutil.rmtree("./tests/data-tmp")
+        os.mkdir("./tests/data-tmp")
 
-        # テスト前の状態に戻す
-        shutil.move("./tests/data/20200101/2020-01-01 10.10.10.jpg", "./tests/data/")
-        shutil.move("./tests/data/20200505/2020-05-05 12.12.12.mov", "./tests/data/")
-        shutil.rmtree("./tests/data/20200101")
-        shutil.rmtree("./tests/data/20200505")
+        organize("./tests/data-org", "./tests/data-tmp")
+
+        file_count = sum(
+            os.path.isfile(os.path.join("./tests/data-tmp/20220821", name))
+            for name in os.listdir("./tests/data-tmp/20220821")
+        )
+        assert file_count == 3
+
+        assert os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58.jpg") is True
+        assert os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58-01.jpg") is True
+        assert os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58-02.jpg") is True
 
     def test_get_path_error1(self):
         with pytest.raises(FileNotFoundError):
