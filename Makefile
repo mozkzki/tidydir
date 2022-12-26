@@ -17,7 +17,7 @@ ut:
 	pytest -v --capture=no --cov-config .coveragerc --cov=src --cov-report=xml --cov-report=term-missing .
 
 ut_ci:
-	coverage run -m pytest -v --capture=no --cov-config .coveragerc --cov=src .
+	coverage run -m pytest -v --capture=no --cov-config .coveragerc .
 	coverage report
 	coverage html
 
