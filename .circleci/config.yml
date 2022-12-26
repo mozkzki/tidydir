@@ -239,6 +239,7 @@ jobs:
             # bash <(curl -s https://codecov.io/bash)
       - store_artifacts:
           path: htmlcov
+      - store_artifacts:
           path: ./image.png
       - notify_success_slack
       - notify_fail_slack
