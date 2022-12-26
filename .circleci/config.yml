@@ -238,7 +238,7 @@ jobs:
             source $(find . -name ${CIRCLE_PROJECT_REPONAME}*)/bin/activate
             make ut
             # bash <(curl -s https://codecov.io/bash)
-      - codecov/upload:
+      - codecov/upload
       - store_artifacts:
           path: ./image.png
       - notify_success_slack
