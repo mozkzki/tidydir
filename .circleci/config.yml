@@ -7,7 +7,7 @@ executors:
 
 orbs:
   slack: circleci/slack@4.4.4
-  codecov: codecov/codecov@1.0.2
+  codecov: codecov/codecov@3.2.3
 
 commands:
   notify_success_slack:
@@ -239,7 +239,6 @@ jobs:
             make ut
             # bash <(curl -s https://codecov.io/bash)
       - codecov/upload:
-        file:
       - store_artifacts:
           path: ./image.png
       - notify_success_slack
