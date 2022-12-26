@@ -7,6 +7,7 @@ executors:
 
 orbs:
   slack: circleci/slack@4.4.4
+  codecov: codecov/codecov@1.0.2
 
 commands:
   notify_success_slack:
@@ -235,13 +236,10 @@ jobs:
           name: Test
           command: |
             source $(find . -name ${CIRCLE_PROJECT_REPONAME}*)/bin/activate
-            # make ut_ci
+            make ut
             # bash <(curl -s https://codecov.io/bash)
-            $HOME/.local/bin/coverage run -m pytest
-            $HOME/.local/bin/coverage report
-            $HOME/.local/bin/coverage html  # open htmlcov/index.html in a browser
-      - store_artifacts:
-          path: htmlcov
+      - codecov/upload:
+        file:
       - store_artifacts:
           path: ./image.png
       - notify_success_slack
