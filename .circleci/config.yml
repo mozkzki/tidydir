@@ -235,9 +235,10 @@ jobs:
           name: Test
           command: |
             source $(find . -name ${CIRCLE_PROJECT_REPONAME}*)/bin/activate
-            make ut
-            bash <(curl -s https://codecov.io/bash)
+            make ut_ci
+            # bash <(curl -s https://codecov.io/bash)
       - store_artifacts:
+          path: htmlcov
           path: ./image.png
       - notify_success_slack
       - notify_fail_slack
