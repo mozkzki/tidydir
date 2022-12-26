@@ -2,7 +2,7 @@ version: 2.1
 executors:
   my-executor:
     docker:
-      - image: cimg/python:3.9.16-browsers
+      - image: cimg/python:3.11.1-browsers
     working_directory: ~/CircleCIWork
 
 orbs:
@@ -203,12 +203,9 @@ jobs:
                   whoami
                   python --version
                   poetry --version
-                  poetry config virtualenvs.in-project true
+                  poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
-                  poetry config --list
-                  ls -al
                   poetry install
-                  ls -al
             - save
             - notify_fail_slack
 
