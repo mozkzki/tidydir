@@ -235,8 +235,11 @@ jobs:
           name: Test
           command: |
             source $(find . -name ${CIRCLE_PROJECT_REPONAME}*)/bin/activate
-            make ut_ci
+            # make ut_ci
             # bash <(curl -s https://codecov.io/bash)
+            $HOME/.local/bin/coverage run -m pytest
+            $HOME/.local/bin/coverage report
+            $HOME/.local/bin/coverage html  # open htmlcov/index.html in a browser
       - store_artifacts:
           path: htmlcov
       - store_artifacts:
