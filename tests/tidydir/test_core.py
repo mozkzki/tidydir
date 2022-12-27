@@ -24,7 +24,7 @@ class TestCore:
         # 実行後
         # -------------------
         # tests/data-tmp
-        # └── 20220821
+        # └── 2022-08-21
         #      ├── 2022-08-21_10-13-58.jpg
         #      ├── 2022-08-21_10-13-58-01.jpg  ※撮影日時が同じファイルは別名で保存
         #      └── 2022-08-21_10-13-58-02.jpg  ※撮影日時が同じファイルは別名で保存
@@ -38,22 +38,14 @@ class TestCore:
         organize("./tests/data-org", "./tests/data-tmp")
 
         file_count = sum(
-            os.path.isfile(os.path.join("./tests/data-tmp/20220821", name))
-            for name in os.listdir("./tests/data-tmp/20220821")
+            os.path.isfile(os.path.join("./tests/data-tmp/2022-08-21", name))
+            for name in os.listdir("./tests/data-tmp/2022-08-21")
         )
         assert file_count == 3
 
-        assert (
-            os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58.jpg") is True
-        )
-        assert (
-            os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58-01.jpg")
-            is True
-        )
-        assert (
-            os.path.exists("./tests/data-tmp/20220821/2022-08-21_10-13-58-02.jpg")
-            is True
-        )
+        assert os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58.jpg") is True
+        assert os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58-01.jpg") is True
+        assert os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58-02.jpg") is True
 
     def test_get_path_error1(self):
         with pytest.raises(FileNotFoundError):

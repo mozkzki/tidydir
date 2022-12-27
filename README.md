@@ -19,6 +19,8 @@
     "MP4",
     "mov",
     "MOV",
+    "mts",
+    "MTS",
 ```
 - ファイル名形式は何でもOK（Exifの撮影日時で判定）
 - Exifの撮影日時が無いファイルは整理されない
@@ -62,6 +64,17 @@ slack_post_url="<slack_post_url>"
 slack_post_channel="<slack_post_channel>"
 line_post_url="<line_post_url>"
 ```
+
+Requirement
+
+ffmpegが必要(動画の撮影日時取得に使用)
+
+```sh
+# Mac
+brew install ffmpeg
+```
+
+Windowsは[https://ffmpeg.org/](https://ffmpeg.org/)からダウンロード
 
 Install
 

@@ -6,6 +6,7 @@ import requests
 import sqlite3
 from typing import List, Dict, Tuple
 from pathlib import Path
+from tidydir.define import TARGET_EXTENSIONS
 from tidydir.media import Media
 from dotenv import load_dotenv
 
@@ -14,18 +15,8 @@ if dotenv_path.exists():
     load_dotenv(verbose=True, dotenv_path=dotenv_path)
 
 # 固定値
-TARGET_EXTENSIONS = [
-    "jpg",
-    "JPG",
-    "jpeg",
-    "JPEG",
-    "png",
-    "PNG",
-    "mp4",
-    "MP4",
-    "mov",
-    "MOV",
-]
+
+
 SLACK_POST_URL = os.environ.get("slack_post_url", None)
 SLACK_CHANNEL = os.environ.get("slack_post_channel", None)
 LINE_POST_URL = os.environ.get("line_post_url", None)
@@ -139,7 +130,7 @@ def __get_medias(target_path: Path) -> List[Media]:
     media_paths = []
     for ext in TARGET_EXTENSIONS:
         media_paths.extend(
-            list(target_path.glob("*." + ext))
+            list(target_path.glob("*" + ext))
         )  # "**/*.mov"とするとサブディレクトリも検索
 
     # Mediaオブジェクトに変換
