@@ -137,7 +137,6 @@ def __get_medias(target_path: Path) -> List[Media]:
             # logging.info("found. [{}]".format(str(media_path)))
             medias.append(media)
         else:
-            print(">" + media.date_str + "<")
             logging.warning("found no metadata media. [{}]".format(str(media_path)))
             media.date_str = "撮影日不明"
             medias.append(media)
