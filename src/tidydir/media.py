@@ -1,6 +1,7 @@
 import datetime
 import subprocess
 import re
+import time
 from pathlib import Path
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -13,6 +14,8 @@ class Media:
         # ここで強制的にopen
         f = open(str(media_path), "rb")
         f.close()
+        # それでもたまにエラーになるため・・
+        time.sleep(2)
 
         self.path: str = str(media_path)
         self.type: str = media_path.suffix
