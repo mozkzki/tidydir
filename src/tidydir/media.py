@@ -9,6 +9,11 @@ from tidydir.define import TARGET_EXTENSIONS_MOVIE
 
 class Media:
     def __init__(self, media_path: Path) -> None:
+        # iCloudの場合、openするまでファイル実体が保持されないため
+        # ここで強制的にopen
+        f = open(str(media_path), "rb")
+        f.close()
+
         self.path: str = str(media_path)
         self.type: str = media_path.suffix
 
@@ -54,7 +59,9 @@ class Media:
         if datetime_str == "":
             return datetime.datetime.min
         tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
-        return datetime.datetime(tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second)
+        return datetime.datetime(
+            tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second
+        )
 
     def __get_movie_shooting_datetime_str(self, media_path: Path) -> str:
         path = str(media_path)
@@ -73,13 +80,15 @@ class Media:
             datetime_str = datetime_str[:-5]
             datetime_str = datetime_str.replace("T", " ")
             datetime_str = datetime_str.replace("-", ":")
+            return datetime_str
 
-            # 日本時間に直す
-            tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
-            tmp_datetime = datetime.datetime(
-                tmp.year, tmp.month, tmp.day, tmp.hour + 9, tmp.minute, tmp.second
-            )
-            return tmp_datetime.strftime("%Y:%m:%d %H:%M:%S")
+            # 日本時間に直す (quicktime.creationdateは日本時間なので不要だった)
+            # tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
+            # tmp_datetime = datetime.datetime(
+            # この加算方法はNG. timedeltaを使う.
+            #     tmp.year, tmp.month, tmp.day, tmp.hour + 9, tmp.minute, tmp.second
+            # )
+            # return tmp_datetime.strftime("%Y:%m:%d %H:%M:%S")
         return ""
 
     def __print_exif_items(self, exif):

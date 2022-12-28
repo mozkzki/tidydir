@@ -80,12 +80,16 @@ def _init_db():
     dbname = DB_NAME
     conn = sqlite3.connect(dbname)
     cur = conn.cursor()
-    for row in cur.execute("SELECT * FROM sqlite_master WHERE TYPE='table' AND name='medias'"):
+    for row in cur.execute(
+        "SELECT * FROM sqlite_master WHERE TYPE='table' AND name='medias'"
+    ):
         # すでに存在する場合
         conn.commit()
         conn.close()
         return
-    cur.execute("CREATE TABLE medias(id INTEGER PRIMARY KEY AUTOINCREMENT, path STRING)")
+    cur.execute(
+        "CREATE TABLE medias(id INTEGER PRIMARY KEY AUTOINCREMENT, path STRING)"
+    )
     conn.commit()
     conn.close()
 
@@ -94,7 +98,9 @@ def _is_registered(media_path: Path) -> bool:
     dbname = DB_NAME
     conn = sqlite3.connect(dbname)
     cur = conn.cursor()
-    for row in cur.execute("SELECT id, path FROM medias WHERE path='" + str(media_path) + "'"):
+    for row in cur.execute(
+        "SELECT id, path FROM medias WHERE path='" + str(media_path) + "'"
+    ):
         # print(row)
         cur.close()
         conn.close()
@@ -120,7 +126,9 @@ def __get_medias(target_path: Path) -> List[Media]:
     logging.info("target extensions: {}".format(TARGET_EXTENSIONS))
     media_paths = []
     for ext in TARGET_EXTENSIONS:
-        media_paths.extend(list(target_path.glob("*" + ext)))  # "**/*.mov"とするとサブディレクトリも検索
+        media_paths.extend(
+            list(target_path.glob("*" + ext))
+        )  # "**/*.mov"とするとサブディレクトリも検索
 
     # Mediaオブジェクトに変換
     medias = []
@@ -184,7 +192,9 @@ def __copy_and_move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
             else:
                 new_path = Path(new_path_str)
             logging.info(
-                "  [{}] copy! ({}) {} -> {}".format(key, media.type, media.path, str(new_path))
+                "  [{}] copy! ({}) {} -> {}".format(
+                    key, media.type, media.path, str(new_path)
+                )
             )
             count += 1
 
