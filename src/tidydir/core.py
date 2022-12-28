@@ -83,16 +83,12 @@ def _init_db():
     dbname = DB_NAME
     conn = sqlite3.connect(dbname)
     cur = conn.cursor()
-    for row in cur.execute(
-        "SELECT * FROM sqlite_master WHERE TYPE='table' AND name='medias'"
-    ):
+    for row in cur.execute("SELECT * FROM sqlite_master WHERE TYPE='table' AND name='medias'"):
         # すでに存在する場合
         conn.commit()
         conn.close()
         return
-    cur.execute(
-        "CREATE TABLE medias(id INTEGER PRIMARY KEY AUTOINCREMENT, path STRING)"
-    )
+    cur.execute("CREATE TABLE medias(id INTEGER PRIMARY KEY AUTOINCREMENT, path STRING)")
     conn.commit()
     conn.close()
 
@@ -101,9 +97,7 @@ def _is_registered(media_path: Path) -> bool:
     dbname = DB_NAME
     conn = sqlite3.connect(dbname)
     cur = conn.cursor()
-    for row in cur.execute(
-        "SELECT id, path FROM medias WHERE path='" + str(media_path) + "'"
-    ):
+    for row in cur.execute("SELECT id, path FROM medias WHERE path='" + str(media_path) + "'"):
         # print(row)
         cur.close()
         conn.close()
@@ -129,9 +123,7 @@ def __get_medias(target_path: Path) -> List[Media]:
     logging.info("target extensions: {}".format(TARGET_EXTENSIONS))
     media_paths = []
     for ext in TARGET_EXTENSIONS:
-        media_paths.extend(
-            list(target_path.glob("*" + ext))
-        )  # "**/*.mov"とするとサブディレクトリも検索
+        media_paths.extend(list(target_path.glob("*" + ext)))  # "**/*.mov"とするとサブディレクトリも検索
 
     # Mediaオブジェクトに変換
     medias = []
@@ -144,10 +136,14 @@ def __get_medias(target_path: Path) -> List[Media]:
         if media.date_str != "":
             # logging.info("found. [{}]".format(str(media_path)))
             medias.append(media)
-            # 処理済みとして登録
-            _regist_media(media_path)
         else:
-            logging.warning("skip. (ex: no exif) [{}]".format(str(media_path)))
+            print(">" + media.date_str + "<")
+            logging.warning("found no metadata media. [{}]".format(str(media_path)))
+            media.date_str = "撮影日不明"
+            medias.append(media)
+
+        # 処理済みとして登録
+        _regist_media(media_path)
 
         # pattern = re.compile(r"(\d{4}-\d{2}-\d{2}) \d{2}\.\d{2}\.\d{2}\.*")
         # m = pattern.search(str(media_path))
@@ -186,11 +182,13 @@ def __copy_and_move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
         for media in media_list:
             # ファイルを日付フォルダにコピー
             new_path_str = shutil.copy(media.path, str(date_dir))
-            new_path = _rename_file(new_path_str, media.datetime_str, media.type)
+            # 撮影日不明の場合はリネームしない
+            if media.date_str != "撮影日不明":
+                new_path = _rename_file(new_path_str, media.datetime_str, media.type)
+            else:
+                new_path = Path(new_path_str)
             logging.info(
-                "  [{}] copy! ({}) {} -> {}".format(
-                    key, media.type, media.path, str(new_path)
-                )
+                "  [{}] copy! ({}) {} -> {}".format(key, media.type, media.path, str(new_path))
             )
             count += 1
 
