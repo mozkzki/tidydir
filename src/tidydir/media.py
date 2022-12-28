@@ -54,9 +54,7 @@ class Media:
         if datetime_str == "":
             return datetime.datetime.min
         tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
-        return datetime.datetime(
-            tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second
-        )
+        return datetime.datetime(tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second)
 
     def __get_movie_shooting_datetime_str(self, media_path: Path) -> str:
         path = str(media_path)
@@ -68,11 +66,11 @@ class Media:
             universal_newlines=True,
         )
         # print(result.stderr)
-        # m = re.search("(?<=com.apple.quicktime.creationdate: )(.*)", result.stderr)
-        m = re.search("creation_time +: (.*)", result.stderr)
+        m = re.search("(?<=com.apple.quicktime.creationdate: )(.*)", result.stderr)
+        # m = re.search("creation_time +: (.*)", result.stderr) # NG. 撮影日時ではない.
         if m is not None:
             datetime_str = m.group(1)
-            datetime_str = datetime_str[:-8]
+            datetime_str = datetime_str[:-5]
             datetime_str = datetime_str.replace("T", " ")
             datetime_str = datetime_str.replace("-", ":")
 

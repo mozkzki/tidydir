@@ -14,9 +14,6 @@ dotenv_path = Path(os.getcwd(), ".env")
 if dotenv_path.exists():
     load_dotenv(verbose=True, dotenv_path=dotenv_path)
 
-# 固定値
-
-
 SLACK_POST_URL = os.environ.get("slack_post_url", None)
 SLACK_CHANNEL = os.environ.get("slack_post_channel", None)
 LINE_POST_URL = os.environ.get("line_post_url", None)
