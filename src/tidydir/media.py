@@ -62,9 +62,7 @@ class Media:
         if datetime_str == "":
             return datetime.datetime.min
         tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
-        return datetime.datetime(
-            tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second
-        )
+        return datetime.datetime(tmp.year, tmp.month, tmp.day, tmp.hour, tmp.minute, tmp.second)
 
     def __get_movie_shooting_datetime_str(self, media_path: Path) -> str:
         path = str(media_path)
@@ -87,6 +85,10 @@ class Media:
         # iOS以外は下記で取得
         m = re.search("creation_time +: (.*)", result.stderr)
         if m is not None:
+            datetime_str = m.group(1)
+            datetime_str = datetime_str[:-9]
+            datetime_str = datetime_str.replace("T", " ")
+            datetime_str = datetime_str.replace("-", ":")
             # 日本時間に直す (quicktime.creationdateは日本時間だが、こちらはGMT）
             tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
             tmp_datetime = datetime.datetime(
