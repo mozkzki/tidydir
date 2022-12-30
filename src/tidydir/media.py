@@ -1,7 +1,8 @@
 import datetime
 import subprocess
 import re
-import time
+
+# import time
 from pathlib import Path
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -12,10 +13,10 @@ class Media:
     def __init__(self, media_path: Path) -> None:
         # iCloudの場合、openするまでファイル実体が保持されないため
         # ここで強制的にopen
-        f = open(str(media_path), "rb")
-        f.close()
+        # f = open(str(media_path), "rb")
+        # f.close()
         # それでもたまにエラーになるため・・
-        time.sleep(2)
+        # time.sleep(2)
 
         self.path: str = str(media_path)
         self.type: str = media_path.suffix
