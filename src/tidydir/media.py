@@ -77,7 +77,6 @@ class Media:
         )
         # print(result.stderr)
         m = re.search("(?<=com.apple.quicktime.creationdate: )(.*)", result.stderr)
-        # m = re.search("creation_time +: (.*)", result.stderr) # NG. 撮影日時ではない.
         if m is not None:
             datetime_str = m.group(1)
             datetime_str = datetime_str[:-5]
@@ -85,13 +84,22 @@ class Media:
             datetime_str = datetime_str.replace("-", ":")
             return datetime_str
 
-            # 日本時間に直す (quicktime.creationdateは日本時間なので不要だった)
-            # tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
-            # tmp_datetime = datetime.datetime(
-            # この加算方法はNG. timedeltaを使う.
-            #     tmp.year, tmp.month, tmp.day, tmp.hour + 9, tmp.minute, tmp.second
-            # )
-            # return tmp_datetime.strftime("%Y:%m:%d %H:%M:%S")
+        # iOS以外は下記で取得
+        m = re.search("creation_time +: (.*)", result.stderr)
+        if m is not None:
+            # 日本時間に直す (quicktime.creationdateは日本時間だが、こちらはGMT）
+            tmp = datetime.datetime.strptime(datetime_str, "%Y:%m:%d %H:%M:%S")
+            tmp_datetime = datetime.datetime(
+                tmp.year,
+                tmp.month,
+                tmp.day,
+                tmp.hour,
+                tmp.minute,
+                tmp.second,
+            )
+            tmp_datetime = tmp_datetime + datetime.timedelta(hours=9)
+            return tmp_datetime.strftime("%Y:%m:%d %H:%M:%S")
+
         return ""
 
     def __print_exif_items(self, exif):
