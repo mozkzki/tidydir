@@ -38,23 +38,14 @@ class TestCore:
         organize("./tests/data-org", "./tests/data-tmp")
 
         file_count = sum(
-            os.path.isfile(os.path.join("./tests/data-tmp/2022-08-21", name))
-            for name in os.listdir("./tests/data-tmp/2022-08-21")
+            os.path.isfile(os.path.join("./tests/data-tmp/2022-12-27", name))
+            for name in os.listdir("./tests/data-tmp/2022-12-27")
         )
         assert file_count == 3
 
-        assert (
-            os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58.jpg")
-            is True
-        )
-        assert (
-            os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58-01.jpg")
-            is True
-        )
-        assert (
-            os.path.exists("./tests/data-tmp/2022-08-21/2022-08-21_10-13-58-02.jpg")
-            is True
-        )
+        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49.MOV") is True
+        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-01.MOV") is True
+        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-02.MOV") is True
 
     def test_get_path_error1(self):
         with pytest.raises(FileNotFoundError):

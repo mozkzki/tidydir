@@ -26,10 +26,15 @@ def organize(target_dir: str = ".", out_dir: str = ".") -> None:
     # 対象ディレクトリのPathオブジェクト
     target_path = _get_path(target_dir)
     # 対象ファイル取得
-    medias: List[Media] = __get_medias(target_path)
-    # コピー&移動
+    # medias: List[Media] = __get_medias(target_path)
+    media_paths: List[Path] = __get_media_paths(target_path)
+    # 一旦コピー
     out_path = _get_path(out_dir)
-    move_result_simple, is_no_move = __copy_and_move(medias, out_path)
+    __copy(media_paths, out_path)
+    # out_path以下のMediaオブジェクトを取得
+    medias = __get_medias(out_path)
+    # 整理
+    move_result_simple, is_no_move = __move(medias, out_path)
     if not is_no_move:
         print(move_result_simple)
 
@@ -120,15 +125,34 @@ def _regist_media(media_path: Path):
     conn.close()
 
 
-def __get_medias(target_path: Path) -> List[Media]:
+def __get_media_paths(target_path: Path) -> List[Path]:
     # 対象拡張子のファイルパス(Pathオブジェクト)を取得
     logging.info("get media files from [{}]".format(str(target_path)))
     logging.info("target extensions: {}".format(TARGET_EXTENSIONS))
-    media_paths = []
+    media_paths: List[Path] = []
     for ext in TARGET_EXTENSIONS:
         media_paths.extend(
             list(target_path.glob("*" + ext))
         )  # "**/*.mov"とするとサブディレクトリも検索
+
+    if len(media_paths) > 0:
+        logging.info("{} target files found.".format(len(media_paths)))
+    else:
+        logging.info("no target files found.")
+
+    return media_paths
+
+
+def __copy(media_paths: List[Path], out_path: Path):
+    for media_path in media_paths:
+        new_path_str = shutil.copy(str(media_path), str(out_path))
+        logging.info("copy file. [{}]->[{}]".format(str(media_path), new_path_str))
+    logging.info("{} files copied.".format(len(media_paths)))
+
+
+def __get_medias(target_path: Path) -> List[Media]:
+    media_paths: List[Path] = []
+    media_paths.extend(list(target_path.glob("*")))  # 全部対象
 
     # Mediaオブジェクトに変換
     medias = []
@@ -158,14 +182,14 @@ def __get_medias(target_path: Path) -> List[Media]:
         #     medias.append(Media(media_path, date_str))
 
     if len(medias) > 0:
-        logging.info("{} target files found.".format(len(medias)))
+        logging.info("{} medias found.".format(len(medias)))
     else:
-        logging.info("no target files found.")
+        logging.info("no medias found.")
 
     return medias
 
 
-def __copy_and_move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
+def __move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
     move_result_simple: str = ""
 
     sorted_medias = sorted(medias, key=lambda x: x.date)
@@ -178,21 +202,21 @@ def __copy_and_move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
     all_count = 0
     for key in date_group_medias:
         # 日付フォルダ作成
-        date_dir: Path = target_path.joinpath(key.replace("/", ""))
+        date_dir: Path = target_path.joinpath(key)
         date_dir.mkdir(exist_ok=True)
 
         media_list = date_group_medias[key]
         count = 0
         for media in media_list:
             # ファイルを日付フォルダにコピー
-            new_path_str = shutil.copy(media.path, str(date_dir))
+            new_path_str = shutil.move(media.path, str(date_dir))
             # 撮影日不明の場合はリネームしない
             if media.date_str != "撮影日不明":
                 new_path = _rename_file(new_path_str, media.datetime_str, media.type)
             else:
                 new_path = Path(new_path_str)
             logging.info(
-                "  [{}] copy! ({}) {} -> {}".format(
+                "  [{}] move! ({}) {} -> {}".format(
                     key, media.type, media.path, str(new_path)
                 )
             )
@@ -203,8 +227,8 @@ def __copy_and_move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
         move_result_simple += result_tmp
         all_count += count
 
-    logging.info("{} files copied.".format(all_count))
-    move_result_simple = "{} files copied.\n{}".format(all_count, move_result_simple)
+    logging.info("{} files moved.".format(all_count))
+    move_result_simple = "{} files moved.\n{}".format(all_count, move_result_simple)
     is_no_move = True if all_count == 0 else False
 
     return move_result_simple, is_no_move
