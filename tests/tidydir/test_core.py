@@ -43,9 +43,18 @@ class TestCore:
         )
         assert file_count == 3
 
-        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49.MOV") is True
-        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-01.MOV") is True
-        assert os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-02.MOV") is True
+        assert (
+            os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49.MOV")
+            is True
+        )
+        assert (
+            os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-01.MOV")
+            is True
+        )
+        assert (
+            os.path.exists("./tests/data-tmp/2022-12-27/2022-12-27_11-34-49-02.MOV")
+            is True
+        )
 
     def test_get_path_error1(self):
         with pytest.raises(FileNotFoundError):

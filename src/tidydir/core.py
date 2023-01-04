@@ -4,6 +4,7 @@ import shutil
 import logging
 import requests
 import sqlite3
+import subprocess
 from typing import List, Dict, Tuple
 from pathlib import Path
 from tidydir.define import TARGET_EXTENSIONS
@@ -115,11 +116,11 @@ def _is_registered(media_path: Path) -> bool:
     return False
 
 
-def _regist_media(media_path: Path):
+def _regist_media(media_path: str):
     dbname = DB_NAME
     conn = sqlite3.connect(dbname)
     cur = conn.cursor()
-    cur.execute('INSERT INTO medias(path) values("' + str(media_path) + '")')
+    cur.execute('INSERT INTO medias(path) values("' + media_path + '")')
     conn.commit()
     cur.close()
     conn.close()
@@ -145,14 +146,27 @@ def __get_media_paths(target_path: Path) -> List[Path]:
 
 def __copy(media_paths: List[Path], out_path: Path):
     for media_path in media_paths:
-        new_path_str = shutil.copy(str(media_path), str(out_path))
-        logging.info("copy file. [{}]->[{}]".format(str(media_path), new_path_str))
+        # 処理済みならスキップ(move処理とは別管理)
+        if _is_registered(media_path):
+            continue
+
+        # 最初shutil.copyを使っていたが、コピー完了前に後続処理が呼ばれるケースがあったため
+        # windowsのバッチコマンドを呼び出す方式に変更
+        command = 'copy "' + str(media_path) + '" "' + str(out_path) + '"'
+        if os.name == "posix":
+            command = 'cp "' + str(media_path) + '" "' + str(out_path) + '"'
+        subprocess.call(command, shell=True)
+        logging.info("copy file. [{}]->[{}]".format(str(media_path), str(out_path)))
+
+        # 処理済みとして登録
+        _regist_media(str(media_path))
+
     logging.info("{} files copied.".format(len(media_paths)))
 
 
 def __get_medias(target_path: Path) -> List[Media]:
     media_paths: List[Path] = []
-    media_paths.extend(list(target_path.glob("*")))  # 全部対象
+    media_paths.extend(list(target_path.glob("*.*")))  # 全部対象
 
     # Mediaオブジェクトに変換
     medias = []
@@ -169,9 +183,6 @@ def __get_medias(target_path: Path) -> List[Media]:
             logging.warning("found no metadata media. [{}]".format(str(media_path)))
             media.date_str = "撮影日不明"
             medias.append(media)
-
-        # 処理済みとして登録
-        _regist_media(media_path)
 
         # pattern = re.compile(r"(\d{4}-\d{2}-\d{2}) \d{2}\.\d{2}\.\d{2}\.*")
         # m = pattern.search(str(media_path))
@@ -221,6 +232,9 @@ def __move(medias: List[Media], target_path: Path) -> Tuple[str, bool]:
                 )
             )
             count += 1
+
+            # 処理済みとして登録
+            _regist_media(media.path)
 
         logging.info("  [{}] count: {}".format(key, count))
         result_tmp = "{} (count: {})\n".format(key, count)
