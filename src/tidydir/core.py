@@ -145,6 +145,7 @@ def __get_media_paths(target_path: Path) -> List[Path]:
 
 
 def __copy(media_paths: List[Path], out_path: Path):
+    count = 0
     for media_path in media_paths:
         # 処理済みならスキップ(move処理とは別管理)
         if _is_registered(media_path):
@@ -157,11 +158,12 @@ def __copy(media_paths: List[Path], out_path: Path):
             command = 'cp "' + str(media_path) + '" "' + str(out_path) + '"'
         subprocess.call(command, shell=True)
         logging.info("copy file. [{}]->[{}]".format(str(media_path), str(out_path)))
+        count += 1
 
         # 処理済みとして登録
         _regist_media(str(media_path))
 
-    logging.info("{} files copied.".format(len(media_paths)))
+    logging.info("{} files copied.".format(count))
 
 
 def __get_medias(target_path: Path) -> List[Media]:
