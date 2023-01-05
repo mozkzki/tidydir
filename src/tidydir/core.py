@@ -27,7 +27,6 @@ def organize(target_dir: str = ".", out_dir: str = ".") -> None:
     # 対象ディレクトリのPathオブジェクト
     target_path = _get_path(target_dir)
     # 対象ファイル取得
-    # medias: List[Media] = __get_medias(target_path)
     media_paths: List[Path] = __get_media_paths(target_path)
     # 一旦コピー
     out_path = _get_path(out_dir)
@@ -186,14 +185,6 @@ def __get_medias(target_path: Path) -> List[Media]:
             media.date_str = "撮影日不明"
             medias.append(media)
 
-        # pattern = re.compile(r"(\d{4}-\d{2}-\d{2}) \d{2}\.\d{2}\.\d{2}\.*")
-        # m = pattern.search(str(media_path))
-        # if m:
-        #     # フォーマットに一致したもののみ対象とする
-        #     date_str = m.groups()[0].replace("-", "")
-        #     logging.info("found. [{}]".format(str(media_path)))
-        #     medias.append(Media(media_path, date_str))
-
     if len(medias) > 0:
         logging.info("{} medias found.".format(len(medias)))
     else:
@@ -259,7 +250,7 @@ def __post_line_message(message: str, target_path: Path) -> None:
         logging.info("omit post message to LINE. because message is empty.")
         return
 
-    message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message
+    message = "動画を整理しました。\n({})\n\n".format(str(target_path)) + message
     line_message = {
         "message": message,
     }
@@ -279,7 +270,7 @@ def __post_slack_message(message: str, target_path: Path) -> None:
         logging.info("omit post message to slack. because message is empty.")
         return
 
-    message = "写真と動画を整理しました。\n({})\n\n".format(target_path.name) + message
+    message = "動画を整理しました。\n({})\n\n".format(str(target_path)) + message
     slack_message = {
         "message": message,
         "color": "good",
