@@ -188,6 +188,8 @@ jobs:
                   poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry update
+                  sudo apt install ffmpeg
+                  ffmpeg -version
             - save
             - store_artifacts:
                 path: ./poetry.lock
@@ -203,9 +205,10 @@ jobs:
                   whoami
                   python --version
                   poetry --version
-                  poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry install
+                  sudo apt install ffmpeg
+                  ffmpeg -version
             - save
             - notify_fail_slack
 
