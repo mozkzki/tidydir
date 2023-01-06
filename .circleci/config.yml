@@ -188,6 +188,7 @@ jobs:
                   poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry update
+                  sudo apt update
                   sudo apt install ffmpeg
                   ffmpeg -version
             - save
@@ -207,6 +208,7 @@ jobs:
                   poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry install
+                  sudo apt update
                   sudo apt install ffmpeg
                   ffmpeg -version
             - save
