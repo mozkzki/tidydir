@@ -20,5 +20,6 @@ start:
 	rm ./tidydir.db
 	rm -rf ./tests/data-tmp
 	mkdir ./tests/data-tmp
+	mkdir ./tests/data-tmp/2022-12-27
 	tidydir ./tests/data-org ./tests/data-tmp
 

@@ -34,6 +34,7 @@ class TestCore:
         if os.path.exists("./tests/data-tmp"):
             shutil.rmtree("./tests/data-tmp")
         os.mkdir("./tests/data-tmp")
+        os.mkdir("./tests/data-tmp/2022-12-27")
 
         organize("./tests/data-org", "./tests/data-tmp")
 

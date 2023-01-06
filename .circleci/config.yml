@@ -203,7 +203,6 @@ jobs:
                   whoami
                   python --version
                   poetry --version
-                  poetry --version
                   poetry config virtualenvs.path ${CIRCLE_WORKING_DIRECTORY}
                   poetry install
             - save
@@ -233,8 +232,10 @@ jobs:
           name: Test
           command: |
             source $(find . -name ${CIRCLE_PROJECT_REPONAME}*)/bin/activate
+            sudo apt update
+            sudo apt install ffmpeg
+            ffmpeg -version
             make ut
-            # bash <(curl -s https://codecov.io/bash)
       - codecov/upload
       - store_artifacts:
           path: ./image.png
