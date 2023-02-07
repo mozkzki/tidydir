@@ -929,14 +929,14 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.28.11.8"
+version = "2.28.11.10"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-requests-2.28.11.8.tar.gz", hash = "sha256:e67424525f84adfbeab7268a159d3c633862dafae15c5b19547ce1b55954f0a3"},
-    {file = "types_requests-2.28.11.8-py3-none-any.whl", hash = "sha256:61960554baca0008ae7e2db2bd3b322ca9a144d3e80ce270f5fb640817e40994"},
+    {file = "types-requests-2.28.11.10.tar.gz", hash = "sha256:0279661f4f4d8721d7d5c47fb5053b83d39cf105c7d9f210a8ce9b6a0c312de4"},
+    {file = "types_requests-2.28.11.10-py3-none-any.whl", hash = "sha256:d2083d9245dd6463fc6ea9eb43ccc719c6922ae33e7debcdacb498f7ca84033d"},
 ]
 
 [package.dependencies]
@@ -986,4 +986,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4502ee55b30914f0d6d32779e058fad77f2d5fe18ef7532e8cebba4ed078f407"
+content-hash = "587ab4988eb6e914612aa675adf70bdf1a8114eeb5efc83b06ac5893b622ca67"
